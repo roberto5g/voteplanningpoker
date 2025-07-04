@@ -225,9 +225,9 @@ class RoomVoteServiceTest {
 
     @Test
     void revealVotesSuggestsLastAllowedWhenAverageAboveAllAllowed() {
-        // average = 10.5, allowedVotes = [1,2,3,5,8] (should suggest 8)
+        // average = 6.5, allowedVotes = [1,2,3,5,8] (should suggest 8)
         topic.getVotes().add(VoteEntity.builder().userName("user1").vote(8).topic(topic).build());
-        topic.getVotes().add(VoteEntity.builder().userName("admin").vote(13).topic(topic).build());
+        topic.getVotes().add(VoteEntity.builder().userName("admin").vote(5).topic(topic).build());
         room.setAllowedVotes(Set.of(1,2,3,5,8));
         RevealVotesRequest request = mock(RevealVotesRequest.class);
         when(request.roomId()).thenReturn(room.getId().toString());
@@ -236,7 +236,7 @@ class RoomVoteServiceTest {
 
         RevealVotesResponse response = roomVoteService.revealVotes(request);
 
-        assertEquals(10.5, response.average());
+        assertEquals(6.5, response.average());
         assertEquals(8, response.suggested());
     }
 
