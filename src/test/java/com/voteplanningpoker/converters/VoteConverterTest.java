@@ -23,13 +23,13 @@ class VoteConverterTest {
         entity.setUserName("bob");
         Vote vote = VoteConverter.convertToDomain(entity);
         assertNotNull(vote);
-        assertEquals(5, vote.getVote());
+        assertEquals(5, vote.getValue());
         assertEquals("bob", vote.getUserName());
     }
 
     @Test
-    void toDomainList_shouldReturnNull_whenInputIsNull() {
-        assertNull(VoteConverter.toDomainList(null));
+    void toDomainList_shouldReturnEmptyList_whenInputIsNull() {
+        assertEquals(List.of(), VoteConverter.toDomainList(null));
     }
 
     @Test
@@ -51,9 +51,9 @@ class VoteConverterTest {
         assertNotNull(votes);
         assertEquals(2, votes.size());
         assertEquals("alice", votes.get(0).getUserName());
-        assertEquals(3, votes.get(0).getVote());
+        assertEquals(3, votes.get(0).getValue());
         assertEquals("bob", votes.get(1).getUserName());
-        assertEquals(8, votes.get(1).getVote());
+        assertEquals(8, votes.get(1).getValue());
     }
 }
 

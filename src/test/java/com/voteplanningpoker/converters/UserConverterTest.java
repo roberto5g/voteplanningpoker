@@ -35,8 +35,8 @@ class UserConverterTest {
     }
 
     @Test
-    void toDomainList_shouldReturnNull_whenInputIsNull() {
-        assertNull(UserConverter.toDomainList(null));
+    void toDomainList_shouldReturnEmptyList_whenInputIsNull() {
+        assertEquals(List.of(), UserConverter.toDomainList(null));
     }
 
     @Test

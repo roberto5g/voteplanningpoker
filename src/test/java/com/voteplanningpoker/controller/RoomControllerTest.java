@@ -9,9 +9,7 @@ import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.mockito.Mockito.*;
 
@@ -36,16 +34,17 @@ class RoomControllerTest {
         when(room.id()).thenReturn("roomId");
         when(roomService.createRoom(request)).thenReturn(room);
         when(accessor.getSessionId()).thenReturn("sessionId");
-        when(accessor.getMessageHeaders()).thenReturn(new MessageHeaders(Collections.emptyMap()));
+        MessageHeaders headers = new MessageHeaders(Collections.emptyMap());
+        when(accessor.getMessageHeaders()).thenReturn(headers);
 
         controller.createRoom(request, accessor);
 
         verify(roomService).createRoom(request);
         verify(messaging).convertAndSendToUser(
-                eq("sessionId"),
-                eq("/queue/room-created"),
-                any(RoomCreatedResponse.class),
-                any(MessageHeaders.class)
+                "sessionId",
+                "/queue/room-created",
+                new RoomCreatedResponse("roomId", room),
+                headers
         );
     }
 
@@ -59,7 +58,7 @@ class RoomControllerTest {
         controller.createTopic(request);
 
         verify(roomService).createTopic(request);
-        verify(messaging).convertAndSend(eq("/topic/room/roomId"), eq(room));
+        verify(messaging).convertAndSend("/topic/room/roomId", room);
     }
 
     @Test
@@ -72,7 +71,7 @@ class RoomControllerTest {
         controller.updateTopic(request);
 
         verify(roomService).updateTopic(request);
-        verify(messaging).convertAndSend(eq("/topic/room/roomId"), eq(room));
+        verify(messaging).convertAndSend("/topic/room/roomId", room);
     }
 
     @Test
@@ -88,19 +87,33 @@ class RoomControllerTest {
         when(creator.getName()).thenReturn("creatorName");
         when(room.allowedVotes()).thenReturn(List.of(1, 2));
         when(accessor.getSessionId()).thenReturn("sessionId");
-        when(accessor.getMessageHeaders()).thenReturn(new MessageHeaders(Collections.emptyMap()));
+        MessageHeaders headers = new MessageHeaders(Collections.emptyMap());
+        when(accessor.getMessageHeaders()).thenReturn(headers);
+
+        Set<User> participants = Set.of();
+        when(room.participants()).thenReturn(participants);
 
         controller.joinToRoom(request, accessor);
 
         verify(roomService).joinRoom(request);
-        verify(messaging).convertAndSendToUser(
-                eq("sessionId"),
-                eq("/queue/room-config"),
-                any(RoomConfigResponse.class),
-                any(MessageHeaders.class)
+
+        RoomConfigResponse expectedConfig = new RoomConfigResponse(
+                "roomName", "creatorName", List.of(1, 2)
         );
-        verify(messaging).convertAndSend(eq("/topic/room/roomId/participants"), any(Map.class));
-        verify(messaging).convertAndSend(eq("/topic/room/roomId"), eq(room));
+
+        Map<String, Object> expectedParticipants = Map.of(
+                "type", "USER_LIST_UPDATED",
+                "participants", participants
+        );
+
+        verify(messaging).convertAndSendToUser(
+                "sessionId",
+                "/queue/room-config",
+                expectedConfig,
+                headers
+        );
+        verify(messaging).convertAndSend("/topic/room/roomId/participants", expectedParticipants);
+        verify(messaging).convertAndSend("/topic/room/roomId", room);
     }
 
     @Test
@@ -113,7 +126,7 @@ class RoomControllerTest {
         controller.vote(request);
 
         verify(roomService).vote(request);
-        verify(messaging).convertAndSend(eq("/topic/room/roomId/votes"), eq(responseVote));
+        verify(messaging).convertAndSend("/topic/room/roomId/votes", responseVote);
     }
 
     @Test
@@ -126,7 +139,7 @@ class RoomControllerTest {
         controller.revealVotes(request);
 
         verify(roomService).revealVotes(request);
-        verify(messaging).convertAndSend(eq("/topic/room/roomId/reveal"), eq(votesResponse));
+        verify(messaging).convertAndSend("/topic/room/roomId/reveal", votesResponse);
     }
 
     @Test
@@ -139,7 +152,7 @@ class RoomControllerTest {
         controller.resetVotes(request);
 
         verify(roomService).resetVotes(request);
-        verify(messaging).convertAndSend(eq("/topic/room/roomId/reset"), eq(room));
+        verify(messaging).convertAndSend("/topic/room/roomId/reset", room);
     }
 
     @Test
@@ -148,10 +161,18 @@ class RoomControllerTest {
         RoomDto room = mock(RoomDto.class);
         when(request.roomId()).thenReturn("roomId");
         when(roomService.removeUser(request)).thenReturn(room);
+        User user = mock(User.class);
+        Set<User> participants = Set.of(user);
+        when(room.participants()).thenReturn(participants);
 
         controller.removeUserFromRoom(request);
 
         verify(roomService).removeUser(request);
-        verify(messaging).convertAndSend(eq("/topic/room/roomId/participants"), any(Map.class));
+
+        Map<String, Object> expectedPayload = Map.of(
+                "type", "USER_LIST_UPDATED",
+                "participants", participants
+        );
+        verify(messaging).convertAndSend("/topic/room/roomId/participants", expectedPayload);
     }
 }

@@ -1,6 +1,5 @@
 package com.voteplanningpoker.service;
 
-import com.voteplanningpoker.domain.Room;
 import com.voteplanningpoker.domain.TopicStatus;
 import com.voteplanningpoker.dto.CreateTopicRequest;
 import com.voteplanningpoker.dto.RoomDto;
@@ -18,7 +17,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 

@@ -23,7 +23,7 @@ public class UserConverter {
 
     public static List<User> toDomainList(List<UserEntity> userEntities) {
         if (userEntities == null) {
-            return null;
+            return List.of();
         }
         return userEntities.stream()
                 .map(UserConverter::toDomain)

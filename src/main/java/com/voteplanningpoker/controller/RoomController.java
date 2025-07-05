@@ -18,6 +18,7 @@ import java.util.Objects;
 public class RoomController {
     private final RoomService roomService;
     private final SimpMessagingTemplate messaging;
+    private static final String ROOM_TOPIC_PREFIX = "/topic/room/";
 
 
     @MessageMapping("/create")
@@ -38,14 +39,14 @@ public class RoomController {
     public void createTopic(CreateTopicRequest request) {
         log.info("CreateTopicRequest {}", request);
         var room = roomService.createTopic(request);
-        messaging.convertAndSend("/topic/room/" + request.roomId(), room);
+        messaging.convertAndSend(ROOM_TOPIC_PREFIX + request.roomId(), room);
     }
 
     @MessageMapping("/update-topic")
     public void updateTopic(UpdateTopicRequest request) {
         log.info("UpdateTopicRequest {}", request);
         var room = roomService.updateTopic(request);
-        messaging.convertAndSend("/topic/room/" + request.roomId(), room);
+        messaging.convertAndSend(ROOM_TOPIC_PREFIX + request.roomId(), room);
     }
 
     @MessageMapping("/join")
@@ -59,35 +60,35 @@ public class RoomController {
                 headerAccessor.getMessageHeaders()
         );
         messaging.convertAndSend(
-                "/topic/room/" + request.roomId() + "/participants",
+                ROOM_TOPIC_PREFIX + request.roomId() + "/participants",
                 Map.of(
                         "type", "USER_LIST_UPDATED",
                         "participants", room.participants()
                 )
         );
 
-        messaging.convertAndSend("/topic/room/" + request.roomId(), room);
+        messaging.convertAndSend(ROOM_TOPIC_PREFIX + request.roomId(), room);
     }
 
     @MessageMapping("/vote")
     public void vote(VoteRequest request) {
         log.info("VoteRequest {}", request);
         var room = roomService.vote(request);
-        messaging.convertAndSend("/topic/room/" + request.roomId() + "/votes", room);
+        messaging.convertAndSend(ROOM_TOPIC_PREFIX + request.roomId() + "/votes", room);
     }
 
     @MessageMapping("/reveal")
     public void revealVotes(RevealVotesRequest request) {
         log.info("RevealVotesRequest {}", request);
         var room = roomService.revealVotes(request);
-        messaging.convertAndSend("/topic/room/" + request.roomId() + "/reveal", room);
+        messaging.convertAndSend(ROOM_TOPIC_PREFIX + request.roomId() + "/reveal", room);
     }
 
     @MessageMapping("/reset")
     public void resetVotes(ResetVotesRequest request) {
         log.info("ResetVotesRequest {}", request);
         var room = roomService.resetVotes(request);
-        messaging.convertAndSend("/topic/room/" + request.roomId() + "/reset", room);
+        messaging.convertAndSend(ROOM_TOPIC_PREFIX + request.roomId() + "/reset", room);
     }
 
     @MessageMapping("/room/remove-user")
@@ -95,7 +96,7 @@ public class RoomController {
         log.info("RemoveUserRoomRequest {}", request);
         var room = roomService.removeUser(request);
         messaging.convertAndSend(
-                "/topic/room/" + request.roomId() + "/participants",
+                ROOM_TOPIC_PREFIX + request.roomId() + "/participants",
                 Map.of(
                         "type", "USER_LIST_UPDATED",
                         "participants", room.participants()
