@@ -2,9 +2,12 @@ package com.voteplanningpoker.converters;
 
 import com.voteplanningpoker.domain.Vote;
 import com.voteplanningpoker.infra.entities.VoteEntity;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class VoteConverter {
     public static Vote convertToDomain(VoteEntity voteEntity) {
         if (voteEntity == null) {
