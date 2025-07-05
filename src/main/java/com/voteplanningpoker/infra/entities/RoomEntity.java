@@ -2,11 +2,15 @@ package com.voteplanningpoker.infra.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.*;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "rooms")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

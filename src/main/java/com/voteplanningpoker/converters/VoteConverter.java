@@ -14,14 +14,14 @@ public class VoteConverter {
             return null;
         }
         return Vote.builder()
-                .vote(voteEntity.getVote())
+                .value(voteEntity.getVote())
                 .userName(voteEntity.getUserName())
                 .build();
     }
 
     public static List<Vote> toDomainList(List<VoteEntity> voteEntities) {
         if (voteEntities == null) {
-            return null;
+            return List.of();
         }
         return voteEntities.stream()
                 .map(VoteConverter::convertToDomain)

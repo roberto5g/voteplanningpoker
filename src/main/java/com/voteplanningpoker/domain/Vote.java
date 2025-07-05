@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Vote {
     private String userName;
-    private int vote;
+    private int value;
 }

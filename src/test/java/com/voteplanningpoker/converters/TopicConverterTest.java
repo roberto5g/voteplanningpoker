@@ -41,7 +41,7 @@ class TopicConverterTest {
         assertNotNull(topic.getVotes());
         assertEquals(1, topic.getVotes().size());
         assertEquals("alice", topic.getVotes().get(0).getUserName());
-        assertEquals(3, topic.getVotes().get(0).getVote());
+        assertEquals(3, topic.getVotes().get(0).getValue());
     }
 
     @Test
