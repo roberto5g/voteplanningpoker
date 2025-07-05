@@ -12,4 +12,6 @@ WORKDIR /app
 
 COPY --from=build /app/target/*.jar app.jar
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ARG PROFILE=prd
+
+ENTRYPOINT ["java", "-Dspring.profiles.active=${PROFILE}", "-jar", "app.jar"]

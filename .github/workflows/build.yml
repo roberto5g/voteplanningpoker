@@ -57,3 +57,6 @@ jobs:
         with:
           push: true
           tags: roberto5g/voteplanningpoker:latest
+          build-args: |
+            PROFILE=prd
+        
