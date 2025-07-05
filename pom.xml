@@ -26,6 +26,7 @@
 		<sonar.coverage.exclusions>
 			**/com/voteplanningpoker/App.java,
 			**/com/voteplanningpoker/config/**,
+			**/com/voteplanningpoker/dto/**,
 		</sonar.coverage.exclusions>
 	</properties>
 
