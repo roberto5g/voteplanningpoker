@@ -2,9 +2,12 @@ package com.voteplanningpoker.converters;
 
 import com.voteplanningpoker.domain.User;
 import com.voteplanningpoker.infra.entities.UserEntity;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserConverter {
     public static User toDomain(UserEntity userEntity) {
         if (userEntity == null) {

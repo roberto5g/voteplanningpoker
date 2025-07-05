@@ -3,8 +3,12 @@ package com.voteplanningpoker.converters;
 import com.voteplanningpoker.domain.Topic;
 import com.voteplanningpoker.domain.TopicStatus;
 import com.voteplanningpoker.infra.entities.TopicEntity;
+import lombok.NoArgsConstructor;
+import lombok.AccessLevel;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TopicConverter {
+
     public static Topic toDomain(TopicEntity topicEntity) {
         if (topicEntity == null) {
             return null;
